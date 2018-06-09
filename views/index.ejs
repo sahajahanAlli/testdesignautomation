@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+        
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2
+        }
+        
+        th {
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>
+        <%= title %>
+    </h1>
+    <p>Welcome to
+        <%= title %>
+    </p>
+
+    <div id='opt'></div>
+    <div id='opt2'></div>
+    <br/>
+    <div id='datid'></div>
+</body>
+
+<script>
+    jQuery(document).ready(function($) {
+        var addall = '<%-arrall%>'.split(']');
+        var modifyadd = [];
+
+        addall.forEach(function(el) {
+            modifyadd.push((el[0] === ',' ? el.slice(1, el.length) : el) + ']');
+        })
+
+        console.log(modifyadd);
+        var dat = <%-data1%>;
+        console.log(dat);
+        var sheetname = '<%=sheetname%>'.split(',');
+        var optdata = '<option value=select>Select the sheet</option>';
+        //create drop down having sheet names
+        sheetname.forEach(function(ele) {
+            console.log(ele);
+            optdata = optdata + '<option value=' + ele + '>' + ele + '</option>';
+        })
+        $('#opt').html('<select>' + optdata + '</select>');
+        //on change of selection
+        $("#opt").change(function() {
+            var selcetedopt = $('#opt option:selected').text();
+            var sheetdata = modifyadd[sheetname.indexOf(selcetedopt)];
+            if (sheetdata.length > 2) {
+                //creating second selection option
+                var criteria1 = [];
+                for (var key in JSON.parse(sheetdata)) {
+                    for (var key1 in JSON.parse(sheetdata)[key]) {
+                        console.log(JSON.parse(sheetdata)[key][key1]);
+                        if (criteria1.indexOf(JSON.parse(sheetdata)[key][key1]) == -1) {
+                            criteria1.push(JSON.parse(sheetdata)[key][key1]);
+                        }
+                    }
+                }
+                console.log(criteria1);
+                var optdata2 = '<option value=select>Select the criteria1</option>';
+                criteria1.forEach(function(ele) {
+                    optdata2 = optdata2 + '<option value=' + ele + '>' + ele + '</option>';
+                });
+                $('#opt2').html('<select>' + optdata2 + '</select>');
+                var tabledata = '<table><tr>';
+                var headerNames = '';
+                var el = modifyadd[sheetname.indexOf(selcetedopt)];
+                //create the table header
+                var columnAssign = JSON.parse(el)[0];
+                for (var key in columnAssign) {
+                    headerNames = headerNames + '<th>' + key + '</th>';
+                }
+                tabledata = tabledata + headerNames + '</tr>';
+                //create the table row data       
+                JSON.parse(el).forEach(function(ele) {
+                    var tablerow = '<tr>';
+                    for (var key in ele) {
+                        tablerow = tablerow + '<td>' + ele[key] + '</td>'
+                    }
+                    tabledata = tabledata + tablerow + '</tr>';
+                })
+                tabledata = tabledata + '</table>';
+                console.log(tabledata)
+                    //display the data in tabular format
+                $('#datid').html(tabledata);
+            } else {
+                //erase the div
+                $('#datid').empty();
+            }
+        });
+    })
+</script>
+
+</html>

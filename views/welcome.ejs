@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        .navbar-default {
+            background-color: #d99872;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+        
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2
+        }
+        
+        th {
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Test Design Automation</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="./about">About</a></li>
+                <li><a href="./demo">Demo</a></li>
+
+            </ul>
+        </div>
+    </nav>
+
+    <div id=login><button id=loginbut class="header-login-btn js-header-loginDropdownToggle" aria-haspopup="true" aria-expanded="false">Login<span></span></button></div>
+    <div id=logo></div>
+    <br/>
+    <br/>
+    <br/>
+    <div class="container">
+        <center>
+            <form id=loginform method="post" action="validateUser"><br>
+
+                <div class="container" style="display: contents;">
+                    <label for="uname"><b>Username</b></label>
+                    <input type="text" placeholder="Enter Username" name="uname" id="uname" value=admin required>
+
+                    <label for="psw"><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" name="psw" id="psw" value=admin required>
+
+                    <button type="submit" id='submitLogin'>Login</button>
+                    <label>
+     <!-- <input type="checkbox" checked="checked" name="remember"> Remember me-->
+    </label>
+                </div>
+            </form>
+        </center>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+
+    <h1 class="hero-headline">Welcome to the revolution</h1>
+
+    <script>
+        jQuery(document).ready(function($) {
+
+            $('#loginbut').click(function() {
+                $('#loginform').toggle();
+                $('.hero-headline').toggle();
+            })
+            $('#submitLogin').submit(function(event) {
+                console.log('Login....');
+                $.ajax({
+                    type: "POST",
+                    url: "validateUser",
+                    data: {
+                        'username': $("#uname").val(),
+                        'password': $("#[sw]").val()
+                    },
+                    dataType: 'json',
+                    async: false,
+                    success: function(response) {
+                        alert(response);
+                    }
+                })
+                event.preventDefault();
+            });
+
+            //if (typeof error !== "undefined") {
+            var status = '<%=error%>';
+            if (status !== 'errordata') {
+                alert(status);
+            }
+            // }
+        })
+    </script>
+</body>
+
+</html>

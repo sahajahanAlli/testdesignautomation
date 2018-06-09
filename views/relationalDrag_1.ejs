@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            opacity: .97;
+        }
+        
+        .table {
+            background-color: #cfd7dd;
+        }
+    </style>
+
+    <script>
+        function _(id) {
+            return document.getElementById(id);
+        }
+        var droppedIn = false;
+
+        function drag_start(event) {
+            //  _('app_status').innerHTML = "<p id=para>Dragging the " + event.target.getAttribute('id') + '</p>';
+            event.dataTransfer.dropEffect = "move";
+            event.dataTransfer.setData("text", event.target.getAttribute('id'));
+        }
+
+        function drag_enter(event) {
+            //   _('app_status').innerHTML = "<p id=para>You are dragging over the " + event.target.getAttribute('id') + '</p>';
+        }
+
+        function drag_leave(event) {
+            //   _('app_status').innerHTML = "<p id=para>You left the " + event.target.getAttribute('id') + '</p>';
+        }
+
+        function drag_drop(event) {
+            event.preventDefault(); /* Prevent undesirable default behavior while dropping */
+            var elem_id = event.dataTransfer.getData("text");
+            event.target.appendChild(_(elem_id));
+            //  _('app_status').innerHTML = "<p id=para>Dropped " + elem_id + " into the " + event.target.getAttribute('id') + '</p>';
+            //  _(elem_id).removeAttribute("draggable");
+            _(elem_id).style.cursor = "default";
+            droppedIn = true;
+        }
+
+        function drag_end(event) {
+            if (droppedIn == false) {
+                _('app_status').innerHTML = "<p id=para>You let the " + event.target.getAttribute('id') + " go." + '</p>';
+            }
+            droppedIn = false;
+        }
+
+        function readDropZone() {
+            var dirtyQueue = [];
+            for (var i = 0; i < _("drop_zone").children.length; i++) {
+                dirtyQueue.push(_("drop_zone").children[i].id);
+            }
+            /* Run Ajax request to pass any data to your server */
+            return dirtyQueue;
+        }
+    </script>
+</head>
+
+<body>
+
+    <div id=maindiv>
+        <div>
+            <div id=logo></div>
+            <div></div>
+            <div id=refresh><button id=adminPage>Admin Operation</button>&nbsp;&nbsp;<button id=refreshbut>Reload</button>&nbsp;&nbsp;<button id=logoutbut>Log Out</button></div>
+        </div>
+        <h1>
+            <span><%= title %></span>
+        </h1>
+        <br/>
+        <br/>
+        <div id=gapfromlogo></div>
+        <div id=divtohide>
+
+            <div>
+                <div class='groupdiv'>
+                    <div id=dropzoneallign>
+                        <h3><span>Drop Zone</span></h3>
+                        <div id="drop_zone" ondragenter="drag_enter(event)" ondrop="drag_drop(event)" ondragover="return false" ondragleave="drag_leave(event)"></div>
+                    </div><br/>
+                    <div id=gapindiv>
+                    </div>
+                    <div id=selectzoneallign>
+                        <h3><span>Selected Filters</span></h3>
+                        <div id=dropSelectdata>
+                        </div>
+                    </div>
+                </div><br/><button id=loaddata>Load options</button>
+                <hr/>
+                <div class='dropdown'>
+                    <div class="dropdown-content" id='dropselect'></div>
+                </div>
+                <div id=dropele ondragenter="drag_enter(event)" ondrop="drag_drop(event)" ondragover="return false" ondragleave="drag_leave(event)"></div>
+            </div>
+        </div><br/>
+        <div><button id=exportData>Export</button></div>
+
+        <br/>
+        <div id="paginationData" class="container"></div>
+        <div id='datid'></div>
+
+</body>
+
+<script>
+    jQuery(document).ready(function($) {
+
+        $('#refreshbut').click(function() {
+            location.reload();
+        });
+
+        $('#logoutbut').click(function() {
+            //  alert(window.location.href);
+            $(window).attr("location", "http://localhost:3000/");
+        });
+
+        $('#adminPage').click(function() {
+            console.log('clicked')
+            document.location.href = '/file'
+        })
+
+        $('#exportData').hide();
+        var counterprime = 0;
+        var optedval = [];
+        var dataArray = [];
+        var dataArrayFinal = [];
+        var selectedColumns = [];
+        var selectedKeys = [];
+        var modifyAdd = [];
+        var datafromTable = <%-result%>;
+        //intialization of golbal repo
+        var finaldata = [];
+        //get the column list which is user friendly like "Functionality"
+        var colm = '<%=datafilter%>'.split(',');
+
+        var tagsele = '<h1><span>Avaliable Filters are.......</span></h1>';
+        var count = 0;
+        colm.forEach(el => {
+                tagsele = tagsele + '<div id="' + el + '" class="objects" draggable="true" ondragstart="drag_start(event)" ondragend="drag_end(event)">' + el + '</div>';
+            })
+            //append the created filters to page
+        $('#dropele').append(tagsele);
+        //get the database column list like "FUNCTIONALITY"
+        var columnLists = '<%=columnname%>'.split(',');
+
+
+        $('#loaddata').click(function() {
+                //retrive the list of filters from drop zone
+                selectedKeys = readDropZone();
+                //create the mapping list database column name list mapping to selected filters in dropzone
+                selectedKeys.forEach(el => {
+                        selectedColumns.push(columnLists[colm.indexOf(el)])
+                    })
+                    // if filter is seleted
+                if (selectedColumns.length > 0) {
+                    //
+                    var finalDropOption = [];
+                    //get the first filter name 
+                    var filtersNameopt = selectedColumns[counterprime];
+                    var dirtydumpArray = [];
+                    var optdata = '';
+                    // create the select options from the complete database table
+                    datafromTable.forEach(el => {
+                            for (let key in el) {
+                                if (key == filtersNameopt) {
+                                    // create the array of unique data in first select option
+                                    if (dirtydumpArray.indexOf(el[key]) == -1) {
+                                        dirtydumpArray.push(el[key])
+                                    }
+                                }
+                            }
+                        })
+                        // finalizing the indivisual options
+                    optdata = optdata + '<option value=select>Select the <b>' + selectedKeys[selectedColumns.indexOf(filtersNameopt)] + '</b></option>'
+                    dirtydumpArray.forEach(function(opt) {
+                        optdata = optdata + '<option value="' + opt + '">' + opt + '</option>'
+                    })
+                    if (counterprime < selectedKeys.length - 1) {
+                        finalDropOption = finalDropOption + '<select class=userselect multiple=true>' + optdata + '</select><br/><br/><button id=loadmore > Load More</button>&nbsp;&nbsp;'
+                    } else {
+                        //adding the button for final submit
+                        finalDropOption = finalDropOption + '<select class=userselect multiple=true>' + optdata + '</select><br/><button id=finaldata > Generate Test Design</button>&nbsp;&nbsp;'
+                    }
+                    //dump the options related to first filter
+                    $('#dropselect').append(finalDropOption);
+
+                    //if user selected more than one select options 
+                    $('#loadmore').click(function() {
+                        //increament the counter to procced to next filter
+                        counterprime++;
+                        finalDropOption = '';
+                        var value = $('.userselect :selected').val();
+                        //Selected options capture process....
+                        $('.userselect :selected').each(function(i, selected) {
+                            optedval[i] = $(selected).text();
+                        });
+                        // get the column name to filter the data db result 
+                        filtersNameopt = selectedColumns[counterprime];
+                        // insert selected options of the first filter to selected option zone
+                        var selectedTemplate = '<div class="innerdiv"><h5>' + selectedKeys[counterprime - 1] + '</h5>';
+                        optedval.forEach(function(ele) {
+                            selectedTemplate = selectedTemplate + '<p>' + ele + '</p>';
+                        })
+                        selectedTemplate = selectedTemplate + '</div>';
+                        $('#dropSelectdata').append(selectedTemplate);
+
+                        // filter out the data as per the first selection
+                        var dirtydumpArray = [];
+                        var optdata = '';
+                        datafromTable.forEach(ele => {
+                            for (let key in ele) {
+                                // check the column name matched with the column name in first filter
+                                if (key == selectedColumns[counterprime - 1]) {
+                                    if (optedval.indexOf(ele[key]) != -1) {
+                                        dataArray.push(ele);
+                                    }
+                                }
+                            }
+                        })
+                        console.log(dataArray)
+
+                        //Create the select options value as per the selection in first filters options
+                        dataArray.forEach(el => {
+                                for (let key in el) {
+                                    //check if column name matches
+                                    if (key == filtersNameopt) {
+                                        if (dirtydumpArray.indexOf(el[key]) == -1) {
+                                            dirtydumpArray.push(el[key])
+                                        }
+                                    }
+                                }
+                            })
+                            // create the second select option for display 
+                        optdata = optdata + '<option value=select>Select the <b>' + selectedKeys[counterprime] + '</b></option>'
+                        dirtydumpArray.forEach(function(opt) {
+                                optdata = optdata + '<option value="' + opt + '">' + opt + '</option>'
+                            })
+                            // finalizing the indivisual options
+                        if (counterprime < selectedKeys.length - 1) {
+                            finalDropOption = finalDropOption + '<select class=userselect multiple=true>' + optdata + '</select><br/><br/><button id=loadmore > Load More</button>&nbsp;&nbsp;'
+                        } else {
+                            //adding the button for final submit if there is no more filter option to show or select
+                            finalDropOption = finalDropOption + '<select class=userselect multiple=true>' + optdata + '</select><br/><button id=finaldata > Generate Test Design</button>&nbsp;&nbsp;'
+                        }
+                        // empty element before loading the new option value list
+                        $('#dropselect').empty();
+                        $('#dropselect').html(finalDropOption);
+                    })
+
+                    //to active the click option activate on dynamically generated 
+                    $("div.dropdown").on("click", "button#loadmore", function() {
+                        //increament the counter and intialize the variable 
+                        counterprime++;
+                        dataArrayFinal = [];
+                        finalDropOption = '';
+                        //  var value = $('.userselect :selected').val();
+                        //Selected options capture process....
+                        $('.userselect :selected').each(function(i, selected) {
+                            optedval[i] = $(selected).text();
+                        });
+
+                        //increamented counter
+                        filtersNameopt = selectedColumns[counterprime];
+                        // display the selected values in previous filter
+                        var selectedTemplate = '<div class="innerdiv"><h5>' + selectedKeys[counterprime - 1] + '</h5>';
+                        optedval.forEach(function(ele) {
+                            selectedTemplate = selectedTemplate + '<p>' + ele + '</p>';
+                        })
+                        selectedTemplate = selectedTemplate + '</div>';
+                        //append selected values
+                        $('#dropSelectdata').append(selectedTemplate);
+
+                        var dirtydumpArray = [];
+                        var optdata = '';
+                        // filtering and creating data array for the next select box creation
+                        dataArray.forEach(ele => {
+                            for (let key in ele) {
+                                if (key == selectedColumns[counterprime - 1]) {
+                                    if (optedval.indexOf(ele[key]) != -1) {
+                                        dataArrayFinal.push(ele);
+                                    }
+                                }
+                            }
+                        })
+
+                        //create the array of distinct values for next select box creation 
+                        dataArrayFinal.forEach(el => {
+                                for (let key in el) {
+                                    if (key == filtersNameopt) {
+                                        if (dirtydumpArray.indexOf(el[key]) == -1) {
+                                            dirtydumpArray.push(el[key])
+                                        }
+                                    }
+                                }
+                            })
+                            //createing html for appending on display
+                        optdata = optdata + '<option value=select>Select the <b>' + selectedKeys[counterprime] + '</b></option>'
+                        dirtydumpArray.forEach(function(opt) {
+                                optdata = optdata + '<option value="' + opt + '">' + opt + '</option>'
+                            })
+                            // finalizing the indisual options
+                        if (counterprime < selectedKeys.length - 1) {
+                            finalDropOption = finalDropOption + '<select class=userselect multiple=true>' + optdata + '</select><br/><br/><button id=loadmore > Load More</button>&nbsp;&nbsp;'
+                        } else {
+                            //adding the button for final submit
+                            finalDropOption = finalDropOption + '<select class=userselect multiple=true>' + optdata + '</select><br/><button id=finaldata > Generate Test Design</button>&nbsp;&nbsp;'
+                        }
+                        $('#dropselect').empty();
+                        // re-intailizing the varibale for next iteration 
+                        dataArray = [];
+                        dataArray = dataArrayFinal;
+                        dataArrayFinal = [];
+                        // Dumping on the display
+                        $('#dropselect').html(finalDropOption);
+                    });
+                } else {
+                    // If no filter selected 
+                    alert('Please Select Filter');
+                }
+            })
+            //when all filter selection is done nad generating the design 
+        $("div.dropdown").on("click", "button#finaldata", function() {
+            // retrieving the values of last selection
+            $('.userselect :selected').each(function(i, selected) {
+                optedval[i] = $(selected).text();
+            });
+
+            // if checks the number of filter selected ,then makes the design for which process need to be followed to generated design 
+            if (selectedColumns.length == 1) {
+                var selectedTemplate = '<div class="innerdiv"><h5>' + selectedKeys[0] + '</h5>';
+                optedval.forEach(function(ele) {
+                    selectedTemplate = selectedTemplate + '<p>' + ele + '</p>';
+                })
+                selectedTemplate = selectedTemplate + '</div>';
+                $('#dropSelectdata').append(selectedTemplate);
+
+                //creating final list of data for display in design
+                datafromTable.forEach(el => {
+                    for (let key in el) {
+                        if (key == selectedColumns[0]) {
+                            if (optedval.indexOf(el[key]) != -1) {
+                                dataArrayFinal.push(el)
+                            }
+                        }
+                    }
+                })
+
+
+            } else {
+                //creating final list of data for display in design
+                var selectedTemplate = '<div class="innerdiv"><h5>' + selectedKeys[0] + '</h5>';
+                optedval.forEach(function(ele) {
+                    selectedTemplate = selectedTemplate + '<p>' + ele + '</p>';
+                })
+                selectedTemplate = selectedTemplate + '</div>';
+                $('#dropSelectdata').append(selectedTemplate);
+
+                dataArray.forEach(el => {
+                    for (let key in el) {
+                        if (key == selectedColumns[counterprime]) {
+                            if (optedval.indexOf(el[key]) != -1) {
+                                dataArrayFinal.push(el)
+                            }
+                        }
+                    }
+                })
+            }
+
+            console.log(dataArrayFinal);
+            // intialzing the pagination variable and tcs per page in pagination
+            var paginationArr = [];
+            var tcsPerPage = 10;
+            var backuparr = dataArrayFinal;
+            var counter = 0;
+            // create pagination array
+            for (let i = 0; i <= Math.floor(backuparr.length / tcsPerPage); i++) {
+                paginationArr.push(backuparr.slice(i * tcsPerPage, (i + 1) * tcsPerPage > backuparr.length ? backuparr.length : (i + 1) * tcsPerPage))
+            }
+
+            //Pagination navigation code. 'paginationNumberArr' , contains the page number in array to display in pagination panel 
+            paginationNumberArr = []
+                // `noPagePerPagination` used for showing number of pages in the pagination
+            var noPagePerPagination = 5;
+            // creating paginationNumberArr array 
+            for (let i = 0; i <= Math.floor(Math.floor(backuparr.length / tcsPerPage) / noPagePerPagination);) {
+                var NoOfUiPagesArr = [];
+                count = 0;
+                for (let j = 0; j < noPagePerPagination && i <= Math.floor(Math.floor(backuparr.length / tcsPerPage) / noPagePerPagination); j++) {
+                    if (count < noPagePerPagination) {
+                        NoOfUiPagesArr.push(i)
+                        i++;
+                        count++;
+                    }
+                }
+                paginationNumberArr.push(NoOfUiPagesArr)
+            }
+
+            console.log(paginationNumberArr)
+
+            //default navigation list
+            var paginationList = '<nav aria-label="Page navigation example"><ul class="pagination justify-content-end"><li class="page-item"><a class="page-link listPrev" href="#" tabindex="-1">Previous</a></li>'
+            paginationNumberArr[counter].forEach(el => {
+                paginationList = paginationList + '<li class="page-item "><a class="page-link listItems" id=' + el + ' href="#">' + el + '</a></li>'
+            })
+            paginationList += ' <li class="page-item"><a class="page-link listNext" href="#">Next</a></li></ul></nav>';
+
+            //Clicking next in pagination
+            $("div#paginationData").on("click", "a.listNext", function() {
+                    console.log(Math.floor(Math.floor(backuparr.length / tcsPerPage) / noPagePerPagination) + ' ' + noPagePerPagination)
+                    if (counter <= Math.floor(Math.floor(backuparr.length / tcsPerPage) / noPagePerPagination)) {
+                        counter++;
+                        var paginationList = '<nav aria-label="Page navigation example"><ul class="pagination justify-content-end"><li class="page-item"><a class="page-link listPrev" href="#" tabindex="-1">Previous</a></li>'
+                        paginationNumberArr[counter].forEach(el => {
+                            console.log('next........' + paginationNumberArr[counter] + ' ' + el)
+                            paginationList = paginationList + '<li class="page-item "><a class="page-link listItems" id=' + el + ' href="#">' + el + '</a></li>'
+                        })
+                        paginationList += ' <li class="page-item"><a class="page-link listNext" href="#">Next</a></li></ul></nav>';
+
+                        $('#paginationData').empty();
+                        $('#paginationData').html(paginationList);
+                    }
+                })
+                //clicking prev in pagination
+            $("div#paginationData").on("click", "a.listPrev", function() {
+                    console.log('Prev.......' + paginationNumberArr[counter])
+                    if (counter > 0) {
+                        counter--;
+                        console.log(counter)
+                        var paginationList = '<nav aria-label="Page navigation example"><ul class="pagination justify-content-end"><li class="page-item"><a class="page-link listPrev" href="#" tabindex="-1">Previous</a></li>'
+                        paginationNumberArr[counter].forEach(el => {
+                            paginationList = paginationList + '<li class="page-item "><a class="page-link listItems" id=' + el + ' href="#">' + el + '</a></li>'
+                        })
+                        paginationList += ' <li class="page-item"><a class="page-link listNext" href="#">Next</a></li></ul></nav>';
+
+                        $('#paginationData').empty();
+                        $('#paginationData').html(paginationList);
+                    }
+                })
+                // dumping dafault pagination array
+            $('#paginationData').empty();
+            $('#paginationData').html(paginationList);
+
+            // displaying the respective section/portion of data if a page number is clicked
+            $("div#paginationData").on("click", "a.listItems", function() {
+
+                    var tabledata = '<table class="table table-striped"><tr>';
+                    var headerNames = '';
+                    var displayfilternames = '<%=displayfilterdata%>'.split(',');
+                    var displayColumnnames = '<%=displayColumndata%>'.split(',')
+
+                    for (var key in displayfilternames) {
+                        headerNames = headerNames + '<th>' + displayfilternames[key] + '</th>';
+
+                    }
+
+                    ///
+                    tabledata = tabledata + headerNames + '</tr>';
+                    paginationArr[$(this).attr('id')].forEach(function(ele) {
+                        var tablerow = '<tr>';
+                        for (var key in displayColumnnames) {
+                            tablerow = tablerow + '<td>' + ele[displayColumnnames[key]] + '</td>'
+                        }
+                        tabledata = tabledata + tablerow + '</tr>';
+                    })
+                    tabledata = tabledata + '</table>';
+                    $('#datid').empty();
+                    $('#datid').html(tabledata);
+                })
+                //default content displaying
+            var tabledata = '<table class="table table-striped"><tr>';
+            var headerNames = '';
+            var displayfilternames = '<%=displayfilterdata%>'.split(',');
+            var displayColumnnames = '<%=displayColumndata%>'.split(',')
+
+            for (var key in displayfilternames) {
+                headerNames = headerNames + '<th>' + displayfilternames[key] + '</th>';
+
+            }
+
+
+            tabledata = tabledata + headerNames + '</tr>';
+            paginationArr[0].forEach(function(ele) {
+                var tablerow = '<tr>';
+                for (var key in displayColumnnames) {
+                    tablerow = tablerow + '<td>' + ele[displayColumnnames[key]] + '</td>'
+                }
+                tabledata = tabledata + tablerow + '</tr>';
+            })
+            tabledata = tabledata + '</table>';
+            $('#dropselect').hide();
+            $('#divtohide').hide();
+            $('#exportData').show();
+            $('#exportData').click(function(e) {
+                JSONToCSVConvertor(JSON.stringify(dataArrayFinal), "Filtered Design Data", true);
+            })
+            $('#datid').html(tabledata);
+        })
+
+    })
+
+    function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
+        //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+        var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+
+        var CSV = '';
+        //Set Report title in first row or line
+        var displayfilternames = '<%=displayfilterdata%>'.split(','),
+            displayColumnnames = '<%=displayColumndata%>'.split(',');
+        //This condition will generate the Label/Header
+        if (ShowLabel) {
+            var row = "";
+
+            //This loop will extract the label from 1st index of on array
+            for (var index in displayfilternames) {
+
+                //Now convert each value to string and comma-seprated
+                row += displayfilternames[index] + ',';
+            }
+            console.log(row)
+            row = row.slice(0, -1);
+
+            //append Label row with line break
+            CSV += row + '\r\n';
+        }
+        var countCol = 12;
+        //1st loop is to extract each row
+        for (var i = 0; i < arrData.length; i++) {
+            var row = "";
+
+            //2nd loop will extract each column and convert it in string comma-seprated
+            displayColumnnames.forEach(el => {
+                row += '"' + arrData[i][el] + '",';
+            })
+
+
+            row.slice(0, 12);
+
+            //add a line break after each row
+            CSV += row + '\r\n';
+        }
+
+        if (CSV == '') {
+            alert("Invalid data");
+            return;
+        }
+
+        //Generate a file name
+        var fileName = "MavericReport_";
+        //this will remove the blank-spaces from the title and replace it with an underscore
+        fileName += ReportTitle.replace(/ /g, "_");
+
+        //Initialize file format you want csv or xls
+        var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+
+        // Now the little tricky part.
+        // you can use either>> window.open(uri);
+        // but this will not work in some browsers
+        // or you will not get the correct file extension    
+
+        //this trick will generate a temp <a /> tag
+        var link = document.createElement("a");
+        link.href = uri;
+
+        //set the visibility hidden so it will not effect on your web-layout
+        link.style = "visibility:hidden";
+        link.download = fileName + ".csv";
+
+        //this part will append the anchor tag and remove it after automatic click
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+</html>
