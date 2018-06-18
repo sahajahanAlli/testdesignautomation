@@ -6,13 +6,17 @@
     <title>
         <%= title %>
     </title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <style>
         body {
             opacity: .97;
@@ -37,6 +41,7 @@
 
         function drag_enter(event) {
             //   _('app_status').innerHTML = "<p id=para>You are dragging over the " + event.target.getAttribute('id') + '</p>';
+
         }
 
         function drag_leave(event) {
@@ -71,54 +76,104 @@
     </script>
 </head>
 
-<body>
+<body style="background: #dddddd57">
+    <div class="container" style="height: 20px;"></div>
+    <div class="container-fluid" style="background: #075eb6; width: 90%;box-shadow: 5px 10px 8px 10px #888888;">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light header-topNav_hero:before nav-tabs">
+                <a class="navbar-brand " id=hearder-text href="#"><span><%= title %></span></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div id=maindiv>
-        <div>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto header-topNav-list-item-link">
+
+                    </ul>
+
+                    <button id=adminPage>Admin Functions</button>&nbsp;&nbsp; <button id=refreshbut>Reload</button>&nbsp;&nbsp; <button id=logoutbut>Log Out</button>
+
+                </div>
+            </nav>
+
+
+        </header>
+        <section>
+
+            <div class="container" style="height:20%"></div>
             <div id=logo></div>
-            <div></div>
-            <div id=refresh><button id=adminPage>Admin Operation</button>&nbsp;&nbsp;<button id=refreshbut>Reload</button>&nbsp;&nbsp;<button id=logoutbut>Log Out</button></div>
-        </div>
-        <h1>
-            <span><%= title %></span>
-        </h1>
-        <br/>
-        <br/>
-        <div id=gapfromlogo></div>
-        <div id=divtohide>
 
-            <div>
-                <div class='groupdiv'>
-                    <div id=dropzoneallign>
+
+        </section>
+        <div class="container-fluid">
+            <section>
+                <br/>
+                <br/>
+                <div class="container" style="height:40%"></div>
+
+                <div class="row">
+                    <div class="col-5">
                         <h3><span>Drop Zone</span></h3>
                         <div id="drop_zone" ondragenter="drag_enter(event)" ondrop="drag_drop(event)" ondragover="return false" ondragleave="drag_leave(event)"></div>
-                    </div><br/>
-                    <div id=gapindiv>
                     </div>
-                    <div id=selectzoneallign>
+                    <div class="col-2"></div>
+                    <div class="col-5">
                         <h3><span>Selected Filters</span></h3>
                         <div id=dropSelectdata>
                         </div>
                     </div>
-                </div><br/><button id=loaddata>Load options</button>
-                <hr/>
-                <div class='dropdown'>
-                    <div class="dropdown-content" id='dropselect'></div>
                 </div>
-                <div id=dropele ondragenter="drag_enter(event)" ondrop="drag_drop(event)" ondragover="return false" ondragleave="drag_leave(event)"></div>
-            </div>
-        </div><br/>
-        <div><button id=exportData>Export</button></div>
+                <div class="container" style="height: 10px"></div>
+                <div class="row">
+                    <button id=loaddata>Load Filters</button></div>
+                <div class=row>
+                    <div class='dropdown'>
+                        <div class="dropdown-content" id='dropselect'></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id=dropele ondragenter="drag_enter(event)" ondrop="drag_drop(event)" ondragover="return false" ondragleave="drag_leave(event)"></div>
+                    <div class="container" style="height: 10px"></div>
+                </div>
+                <div class="row">
+                    <button id=exportData>Export</button>
+                </div>
+            </section>
+        </div>
 
-        <br/>
-        <div id="paginationData" class="container"></div>
-        <div id='datid'></div>
+        <section>
+            <div class="container-fuild">
+                <div class="row">
+                    <div class="col" id="paginationData"></div>
+                </div>
+                <div class="row">
+                    <div class="col" id='datid'></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
 
 </body>
+
 
 <script>
     jQuery(document).ready(function($) {
 
+
+        $('#drop_zone').mouseleave(function() {
+            console.log('drop zone entering')
+            $(this).children().removeClass('objects').addClass('objects1')
+
+        })
+
+        $('#dropele').mouseleave(function() {
+            console.log(' drop ele entering')
+
+            console.log($('#dropele').children('#innercontainer').children('center#innercenter').children())
+            $('#dropele').children('#innercontainer').children('center#innercenter').children().removeClass('objects1').addClass('objects')
+
+        })
         $('#refreshbut').click(function() {
             location.reload();
         });
@@ -147,12 +202,13 @@
         //get the column list which is user friendly like "Functionality"
         var colm = '<%=datafilter%>'.split(',');
 
-        var tagsele = '<h1><span>Avaliable Filters are.......</span></h1>';
+        var tagsele = '<div class="container" style="height: 10px"></div><h1><span>Select The Required Criteria</span></h1><div  class="container" style="height: 10px"></div><div id=innercontainer ><center id=innercenter>';
         var count = 0;
         colm.forEach(el => {
-                tagsele = tagsele + '<div id="' + el + '" class="objects" draggable="true" ondragstart="drag_start(event)" ondragend="drag_end(event)">' + el + '</div>';
-            })
-            //append the created filters to page
+            tagsele = tagsele + '<div id="' + el + '" class="objects" draggable="true" ondragstart="drag_start(event)" ondragend="drag_end(event)">' + el + '</div>';
+        })
+        tagsele = tagsele + '</center></div>';
+        //append the created filters to page
         $('#dropele').append(tagsele);
         //get the database column list like "FUNCTIONALITY"
         var columnLists = '<%=columnname%>'.split(',');
@@ -185,7 +241,7 @@
                             }
                         })
                         // finalizing the indivisual options
-                    optdata = optdata + '<option value=select>Select the <b>' + selectedKeys[selectedColumns.indexOf(filtersNameopt)] + '</b></option>'
+                    optdata = optdata + '<option value=select disabled>Select the <b>' + selectedKeys[selectedColumns.indexOf(filtersNameopt)] + '</b></option>'
                     dirtydumpArray.forEach(function(opt) {
                         optdata = optdata + '<option value="' + opt + '">' + opt + '</option>'
                     })
@@ -195,7 +251,10 @@
                         //adding the button for final submit
                         finalDropOption = finalDropOption + '<select class=userselect multiple=true>' + optdata + '</select><br/><button id=finaldata > Generate Test Design</button>&nbsp;&nbsp;'
                     }
+
                     //dump the options related to first filter
+                    $('#loaddata').hide();
+                    $('#dropele').hide();
                     $('#dropselect').append(finalDropOption);
 
                     //if user selected more than one select options 
@@ -205,6 +264,7 @@
                         finalDropOption = '';
                         var value = $('.userselect :selected').val();
                         //Selected options capture process....
+                        optedval = [];
                         $('.userselect :selected').each(function(i, selected) {
                             optedval[i] = $(selected).text();
                         });
@@ -217,8 +277,10 @@
                         })
                         selectedTemplate = selectedTemplate + '</div>';
                         $('#dropSelectdata').append(selectedTemplate);
-
-                        // filter out the data as per the first selection
+                        console.log('inside load more')
+                        console.log(selectedTemplate)
+                        console.log(optedval)
+                            // filter out the data as per the first selection
                         var dirtydumpArray = [];
                         var optdata = '';
                         datafromTable.forEach(ele => {
@@ -245,7 +307,7 @@
                                 }
                             })
                             // create the second select option for display 
-                        optdata = optdata + '<option value=select>Select the <b>' + selectedKeys[counterprime] + '</b></option>'
+                        optdata = optdata + '<option value=select disabled>Select the <b>' + selectedKeys[counterprime] + '</b></option>'
                         dirtydumpArray.forEach(function(opt) {
                                 optdata = optdata + '<option value="' + opt + '">' + opt + '</option>'
                             })
@@ -267,8 +329,10 @@
                         counterprime++;
                         dataArrayFinal = [];
                         finalDropOption = '';
+                        var optedval = [];
                         //  var value = $('.userselect :selected').val();
                         //Selected options capture process....
+
                         $('.userselect :selected').each(function(i, selected) {
                             optedval[i] = $(selected).text();
                         });
@@ -276,12 +340,17 @@
                         //increamented counter
                         filtersNameopt = selectedColumns[counterprime];
                         // display the selected values in previous filter
-                        var selectedTemplate = '<div class="innerdiv"><h5>' + selectedKeys[counterprime - 1] + '</h5>';
+                        var selectedTemplate = '';
+                        selectedTemplate = '<div class="innerdiv"><h5>' + selectedKeys[counterprime - 1] + '</h5>';
                         optedval.forEach(function(ele) {
                             selectedTemplate = selectedTemplate + '<p>' + ele + '</p>';
                         })
                         selectedTemplate = selectedTemplate + '</div>';
                         //append selected values
+                        console.log('inside 2nd load more')
+                        console.log(selectedTemplate)
+                        console.log(optedval)
+
                         $('#dropSelectdata').append(selectedTemplate);
 
                         var dirtydumpArray = [];
@@ -308,7 +377,7 @@
                                 }
                             })
                             //createing html for appending on display
-                        optdata = optdata + '<option value=select>Select the <b>' + selectedKeys[counterprime] + '</b></option>'
+                        optdata = optdata + '<option value=select disabled>Select the <b>' + selectedKeys[counterprime] + '</b></option>'
                         dirtydumpArray.forEach(function(opt) {
                                 optdata = optdata + '<option value="' + opt + '">' + opt + '</option>'
                             })
@@ -335,13 +404,15 @@
             //when all filter selection is done nad generating the design 
         $("div.dropdown").on("click", "button#finaldata", function() {
             // retrieving the values of last selection
+            optedval = [];
             $('.userselect :selected').each(function(i, selected) {
                 optedval[i] = $(selected).text();
             });
 
             // if checks the number of filter selected ,then makes the design for which process need to be followed to generated design 
+            var selectedTemplate = '';
             if (selectedColumns.length == 1) {
-                var selectedTemplate = '<div class="innerdiv"><h5>' + selectedKeys[0] + '</h5>';
+                selectedTemplate = '<div class="innerdiv"><h5>' + selectedKeys[0] + '</h5>';
                 optedval.forEach(function(ele) {
                     selectedTemplate = selectedTemplate + '<p>' + ele + '</p>';
                 })
@@ -362,7 +433,8 @@
 
             } else {
                 //creating final list of data for display in design
-                var selectedTemplate = '<div class="innerdiv"><h5>' + selectedKeys[0] + '</h5>';
+                var selectedTemplate = '';
+                selectedTemplate = '<div class="innerdiv"><h5>' + selectedKeys[counterprime] + '</h5>';
                 optedval.forEach(function(ele) {
                     selectedTemplate = selectedTemplate + '<p>' + ele + '</p>';
                 })
@@ -414,7 +486,8 @@
             //default navigation list
             var paginationList = '<nav aria-label="Page navigation example"><ul class="pagination justify-content-end"><li class="page-item"><a class="page-link listPrev" href="#" tabindex="-1">Previous</a></li>'
             paginationNumberArr[counter].forEach(el => {
-                paginationList = paginationList + '<li class="page-item "><a class="page-link listItems" id=' + el + ' href="#">' + el + '</a></li>'
+                var numberingPage = parseInt(el) + 1;
+                paginationList = paginationList + '<li class="page-item "><a class="page-link listItems" id=' + el + ' href="#">' + numberingPage + '</a></li>'
             })
             paginationList += ' <li class="page-item"><a class="page-link listNext" href="#">Next</a></li></ul></nav>';
 
@@ -426,7 +499,8 @@
                         var paginationList = '<nav aria-label="Page navigation example"><ul class="pagination justify-content-end"><li class="page-item"><a class="page-link listPrev" href="#" tabindex="-1">Previous</a></li>'
                         paginationNumberArr[counter].forEach(el => {
                             console.log('next........' + paginationNumberArr[counter] + ' ' + el)
-                            paginationList = paginationList + '<li class="page-item "><a class="page-link listItems" id=' + el + ' href="#">' + el + '</a></li>'
+                            var numberingPage = parseInt(el) + 1;
+                            paginationList = paginationList + '<li class="page-item "><a class="page-link listItems" id=' + el + ' href="#">' + numberingPage + '</a></li>'
                         })
                         paginationList += ' <li class="page-item"><a class="page-link listNext" href="#">Next</a></li></ul></nav>';
 
@@ -442,7 +516,8 @@
                         console.log(counter)
                         var paginationList = '<nav aria-label="Page navigation example"><ul class="pagination justify-content-end"><li class="page-item"><a class="page-link listPrev" href="#" tabindex="-1">Previous</a></li>'
                         paginationNumberArr[counter].forEach(el => {
-                            paginationList = paginationList + '<li class="page-item "><a class="page-link listItems" id=' + el + ' href="#">' + el + '</a></li>'
+                            var numberingPage = parseInt(el) + 1;
+                            paginationList = paginationList + '<li class="page-item "><a class="page-link listItems" id=' + el + ' href="#">' + numberingPage + '</a></li>'
                         })
                         paginationList += ' <li class="page-item"><a class="page-link listNext" href="#">Next</a></li></ul></nav>';
 

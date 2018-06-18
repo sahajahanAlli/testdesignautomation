@@ -153,7 +153,7 @@ var dbOperation = {
                                                 if (err) {
                                                     console.log(err)
                                                 } else {
-
+                                                    console.log('fetchTcsToDBforNormalUser')
                                                     res.render('relationalDrag_1', { title: 'Test Design Automation', result: JSON.stringify(result).replace(/'/g, "\\'"), datafilter: data, columnname: columnname, displayfilterdata: displayfilterdata, displayColumndata: displayColumndata });
                                                 }
                                             })

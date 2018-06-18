@@ -13,16 +13,16 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <style>
         body {
-            opacity: .97;
             background-image: none;
-            background: rgba(0, 123, 255, 0.12);
+            background: #dddddd57;
         }
         
         form {
             width: 75%;
             left: 75%;
             border-radius: 10px;
-            background: rgba(36, 221, 25, 0.33);
+            background: white;
+            height: 200px;
         }
         
         .form-control-file,
@@ -34,89 +34,77 @@
 </head>
 
 <body>
+    <div class="container" style="height:10%"></div>
+    <div class="container-fluid" style=" background: #075eb6;width: 90% ;height: 900px;box-shadow: 5px 10px 8px 10px #888888;">
 
-
-    <div class="jumbotron text-center">
-        <h1>
-            <%= title %>
-        </h1>
-        <p>Welcome to
-            <%= title %>
-        </p>
-    </div>
-
-
-
-
-    <div class=".container-fluid">
-        <div class="row">
-            <div class="col">
-                <form action="/v1/admin/upload" method=post encType="multipart/form-data" style="display:block">
-                    <h2 class=text-center>Upload Excel</h2>
-                    <br/>
-                    <div class="form-group">
-                        <center> <input type="file" class="form-control-file" name="dataFile" id="dataFile" placeholder="Please browse the file location" aria-describedby="fileHelpId"></center>
-                        <small id="fileHelpId" class="form-text text-muted"></small><br/>
-                    </div>
-                    <center> <button type="submit" class="btn btn-primary">Upload</button></center>
-                </form>
-            </div>
-            <div class="col">
-                <form action="/v1/admin/listtcs" method=get style="display:block">
-                    <h2 class=text-center>View Test case</h2>
-                    <br/>
-                    <div class="form-group">
-                        <center> <input type="text" class="form-control-file" name="testcase" id="testcase" placeholder="Enter TCS in comma separated manner"></center>
-                    </div>
-                    <center> <button type="submit" class="btn btn-primary">Find</button></center>
-                </form>
-            </div>
+        <div class="jumbotron text-center" style="background: #d91c28">
+            <h1 class="login-lebel">
+                <%= title %>
+            </h1>
+            <p class="login-lebel">Welcome to
+                <%= title %>
+            </p>
         </div>
-        <br/>
-        <br/>
-        <br/>
-        <div class="row">
-            <div class="col">
-                <form action="/v1/admin/listtcs" method=get style="display:block">
-                    <h2 class=text-center>View Log</h2>
-                    <center> <button type="submit" class="btn btn-primary">View</button></center>
-                </form>
-            </div>
-            <div class="col">
-                <form action="/v1/admin/listtcs" method=get style="display:block">
-                    <h2 class=text-center>Role Management</h2>
-                    <center> <button type="submit" class="btn btn-primary">View/Change</button></center>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!--
-    <div class=".container-fluid">
-        <div class="row">
-            <form action="/v1/admin/upload" method=post encType="multipart/form-data" style="display:block">
-                <div class="form-group">
-                    <input type="file" class="form-control-file" name="dataFile" id="dataFile" placeholder="Please browse the file location" aria-describedby="fileHelpId">
-                    <small id="fileHelpId" class="form-text text-muted"></small><br/>
+        <div class="container" style="height: 10%;"></div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <center>
+                        <form action="/v1/admin/upload" method=post encType="multipart/form-data" style="display:block">
+                            <h2 class=text-center>Upload Excel</h2>
+                            <br/>
+                            <div class="form-group">
+                                <center> <input type="file" class="form-control-file" name="dataFile" id="dataFile" placeholder="Please browse the file location" aria-describedby="fileHelpId"></center>
+                                <small id="fileHelpId" class="form-text text-muted"></small><br/>
+                            </div>
+                            <center> <button type="submit" class="btn btn-error">Upload</button></center>
+                        </form>
+                    </center>
                 </div>
-                <button type="submit" class="btn btn-primary">Upload</button>
-            </form>
-        </div>
-
-    </div>
-
-    <div class=".container-fluid">
-        <div class="row">
-            <form action="/action_page.php" style="display:block">
-                <div class="form-group">
-                    <label for="email">Email address:</label>
-                    <input type="email" class="form-control" id="email">
+                <div class="col">
+                    <center>
+                        <form action="/v1/admin/listtcs" method=get style="display:block">
+                            <h2 class=text-center>View Test Cases</h2>
+                            <br/>
+                            <div class="form-group">
+                                <center> <input type="text" class="form-control-file" name="testcase" id="testcase" placeholder="Enter test case numbers in comma separated "></center>
+                            </div>
+                            <center> <button type="submit" class="btn btn-error">Find</button></center>
+                        </form>
+                    </center>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <div class="row">
+                <div class="col">
+                    <center>
+                        <form action="/v1/admin/listtcs" method=get style="display:block">
+                            <br/>
+                            <h2 class=text-center>View Log</h2>
+                            <br/>
+                            <br/>
+                            <center> <button type="submit" class="btn btn-error">View</button></center>
+                        </form>
+                    </center>
+                </div>
+                <div class="col">
+                    <center>
+                        <form action="/v1/admin/listtcs" method=get style="display:block">
+                            <br/>
+                            <h2 class=text-center>User Role Management</h2>
+                            <br/>
+                            <br/>
+                            <center> <button type="submit" class="btn btn-error">View/Change</button></center>
+                        </form>
+                    </center>
+                </div>
+            </div>
         </div>
     </div>
--->
+
     <script>
         jQuery(document).ready(function($) {
             $('#uploadFile').click(function() {

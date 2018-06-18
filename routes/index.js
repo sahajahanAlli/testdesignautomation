@@ -13,14 +13,18 @@ var router = express.Router();
 
 
 
-router.get('/', function(req, res, next) {
+/*router.get('/', function(req, res, next) {
     res.render('welcome', { title: 'Welcome To MetroBank', error: 'errordata' });
+});*/
+
+router.get('/', function(req, res, next) {
+    res.render('welcome_1', { title: 'Welcome To MetroBank', error: 'errordata' });
 });
 
 
 //browse file page opens up
 router.get('/file', function(req, res, next) {
-    res.render('fileupload', { title: 'Admin Operations' });
+    res.render('fileupload', { title: 'Admin Functions' });
 });
 //about
 router.get('/about', function(req, res, next) {
